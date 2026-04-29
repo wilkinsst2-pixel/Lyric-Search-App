@@ -4,6 +4,7 @@ const form = document.getElementById('form');
 const search = document.getElementById('search');
 const result = document.getElementById('result');
 const more = document.getElementById('more');
+const picture = document.getElementById('picture');
 
 const apiURL = 'https://api.lyrics.ovh';
 
@@ -70,6 +71,11 @@ function showDataSafe(lyrics) {
 
   lyrics.data.forEach((song) => {
     const li = document.createElement('li');
+    const img = document.createElement('img');
+    img.src = song.album.cover_medium;
+    img.alt = song.title;
+
+    li.appendChild(img);   
 
     const span = document.createElement('span');
 
@@ -78,15 +84,18 @@ function showDataSafe(lyrics) {
 
     span.appendChild(strong);
     span.appendChild(document.createTextNode(` - ${song.title}`));
+    span.appendChild(document.createTextNode(` • Lyrics`));
     li.appendChild(span);
 
-    const button = document.createElement('button');
-    button.className = 'btn';
-    button.textContent = 'Get Lyrics';
-    button.dataset.artist = song.artist.name;
-    button.dataset.songtitle = song.title;
+    
 
-    li.appendChild(button);
+
+    li.style.cursor = 'pointer';
+
+    li.addEventListener('click', () => {
+        getLyricsSafe(song.artist.name, song.title);
+    });
+
     ul.appendChild(li);
   });
 
