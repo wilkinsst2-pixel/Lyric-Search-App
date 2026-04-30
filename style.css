@@ -29,7 +29,6 @@ header {
   align-items: center;
   justify-content: center;
   padding: 20px 0;
-  /* Position this relative so we can position its descendant using absolute */
   position: relative;
 }
 
@@ -42,9 +41,8 @@ header::after {
   width: 100%;
 }
 
-/* Select everything in the header */
+
 header * {
-  /* The higher the z-index the more on top or closer to us */
   z-index: 1;
 }
 
@@ -80,7 +78,6 @@ form button:hover {
  background-color: #907aff;   
 }
 
-/* Injecting the btn class via JS */
 .btn {
   background-color: #8494FF;
   border: 0;
@@ -96,7 +93,6 @@ form button:hover {
   transform: scale(1.2)
 }
 
-/* We won't see these styles until we fetch the data from the API */
 ul.songs {
   list-style-type: none;
   padding: 0;
@@ -132,7 +128,6 @@ ul.songs li:active {
   text-align: center;
 }
 
-/* Previous and Next buttons have a class of centered */
 .centered {
   display: flex;
   justify-content: center;
@@ -173,7 +168,6 @@ ul.songs li img {
   display: flex;
   align-items: center;
   justify-content: center;
-  cursor: pointer;
 }
 .play-btn { 
   width: 20px;

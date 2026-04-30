@@ -7,10 +7,10 @@ const more = document.getElementById('more');
 const searchResults = document.getElementById('search-results');
 const apiURL = 'https://api.lyrics.ovh';
 
+// For play button
 let currentAudio = null;
 let currentBtn = null;
 
-// Search by song or artist
 async function searchSongs(term) {
   searchResults.textContent = `Showing results for "${term}"`;
   
@@ -20,7 +20,6 @@ async function searchSongs(term) {
   showDataSafe(data);
 }
 
-// Event listeners
 form.addEventListener('submit', (e) => {
   e.preventDefault();
 
@@ -32,8 +31,6 @@ form.addEventListener('submit', (e) => {
     searchSongs(searchTerm);
   }
 });
-// Show song and artist in the DOM
-// NOTE: Yes, this uses the insecure .innerHTML.
 function showDataUnsafe(lyrics) {
   result.innerHTML = `
     <ul class="songs">
@@ -76,6 +73,8 @@ function showDataSafe(lyrics) {
   lyrics.data.forEach((song) => {
     const li = document.createElement('li');
     const img = document.createElement('img');
+
+    // Add album cover picture
     img.src = song.album.cover_medium;
     img.alt = song.title;
 
@@ -91,6 +90,7 @@ function showDataSafe(lyrics) {
     span.appendChild(document.createTextNode(` • Lyrics`));
     li.appendChild(span);
 
+    // Making functional play button for songs
     const playContainer = document.createElement('div');
     playContainer.className = 'play-container';
 
@@ -152,7 +152,6 @@ function showDataSafe(lyrics) {
     }
   }
 }
-// Get lyrics button click
 result.addEventListener('click', (e) => {
   const clickedEl = e.target;
 
@@ -160,12 +159,11 @@ result.addEventListener('click', (e) => {
     const artist = clickedEl.getAttribute('data-artist');
     const songTitle = clickedEl.getAttribute('data-songtitle');
 
-    // getLyricsUnsafe(artist, songTitle);
     getLyricsSafe(artist, songTitle);
   }
 });
 
-// Get lyrics for song
+
 async function getLyricsUnsafe(artist, songTitle) {
   const res = await fetch(`${apiURL}/v1/${artist}/${songTitle}`);
   const data = await res.json();
@@ -216,6 +214,7 @@ async function getLyricsSafe(artist, songTitle, preview) {
   heading.append(strong, ` - ${songTitle}`);
   result.append(heading); 
 
+  // Making functional play button for lyrics page
   const playContainer = document.createElement('div');
   playContainer.className = 'play-container lyrics-play-container';
 
@@ -227,9 +226,9 @@ async function getLyricsSafe(artist, songTitle, preview) {
   result.append(playContainer); 
 
    playContainer.addEventListener('click', (e) => {
-    e.stopPropagation();
+   e.stopPropagation();
 
-    if (!preview) return;
+   if (!preview) return;
 
     if (currentAudio && currentBtn === playContainer) {
     currentAudio.pause();
