@@ -4,12 +4,16 @@ const form = document.getElementById('form');
 const search = document.getElementById('search');
 const result = document.getElementById('result');
 const more = document.getElementById('more');
-const picture = document.getElementById('picture');
-
+const searchResults = document.getElementById('search-results');
 const apiURL = 'https://api.lyrics.ovh';
+
+let currentAudio = null;
+let currentBtn = null;
 
 // Search by song or artist
 async function searchSongs(term) {
+  searchResults.textContent = `Showing results for "${term}"`;
+  
   const res = await fetch(`${apiURL}/suggest/${term}`);
   const data = await res.json();
 
@@ -87,13 +91,40 @@ function showDataSafe(lyrics) {
     span.appendChild(document.createTextNode(` • Lyrics`));
     li.appendChild(span);
 
-    
+    const playContainer = document.createElement('div');
+    playContainer.className = 'play-container';
 
+    const playBtn = document.createElement('img');
+    playBtn.src = 'img/play.webp';
+    playBtn.className = 'play-btn';
+
+    playContainer.appendChild(playBtn);
+    li.appendChild(playContainer);
+
+
+    playContainer.addEventListener('click', (e) => {
+    e.stopPropagation();
+
+    if (currentAudio && currentBtn === playContainer) {
+    currentAudio.pause();
+    currentAudio = null;
+    currentBtn = null;
+    return;
+    }
+    if (currentAudio) {
+    currentAudio.pause();
+    }
+    const audio = new Audio(song.preview);
+    audio.play();
+
+    currentAudio = audio;
+    currentBtn = playContainer;
+    });
 
     li.style.cursor = 'pointer';
 
     li.addEventListener('click', () => {
-        getLyricsSafe(song.artist.name, song.title);
+        getLyricsSafe(song.artist.name, song.title, song.preview);
     });
 
     ul.appendChild(li);
@@ -153,9 +184,10 @@ async function getLyricsUnsafe(artist, songTitle) {
   more.innerHTML = '';
 }
 
-async function getLyricsSafe(artist, songTitle) {
+async function getLyricsSafe(artist, songTitle, preview) {
   const res = await fetch(`${apiURL}/v1/${artist}/${songTitle}`);
   const data = await res.json();
+  searchResults.textContent = '';
 
   result.innerHTML = '';
   more.innerHTML = '';
@@ -167,17 +199,59 @@ async function getLyricsSafe(artist, songTitle) {
     return;
   }
 
-  // Create heading
   const heading = document.createElement('h2');
   const strong = document.createElement('strong');
   strong.textContent = artist;
 
-  heading.append(strong, ` - ${songTitle}`);
-  result.append(heading);
+  const backBtn = document.createElement('button');
+  backBtn.textContent = '← Back';
+  backBtn.className = 'btn back-btn';
 
-  // Create lyrics block with line breaks
+  backBtn.addEventListener('click', () => {
+    searchSongs(search.value.trim());
+  });
+
+  result.append(backBtn);
+
+  heading.append(strong, ` - ${songTitle}`);
+  result.append(heading); 
+
+  const playContainer = document.createElement('div');
+  playContainer.className = 'play-container lyrics-play-container';
+
+  const playBtn = document.createElement('img');
+  playBtn.src = 'img/play.webp';
+  playBtn.className = 'play-btn lyrics-play-btn';
+
+  playContainer.appendChild(playBtn);
+  result.append(playContainer); 
+
+   playContainer.addEventListener('click', (e) => {
+    e.stopPropagation();
+
+    if (!preview) return;
+
+    if (currentAudio && currentBtn === playContainer) {
+    currentAudio.pause();
+    currentAudio = null;
+    currentBtn = null;
+    return;
+    }
+    if (currentAudio) {
+    currentAudio.pause();
+    }
+    const audio = new Audio(preview);
+    audio.play();
+
+    currentAudio = audio;
+    currentBtn = playContainer;
+    });
+    
+
+  
   const span = document.createElement('span');
   const lines = data.lyrics.split(/\r\n|\r|\n/);
+  span.className = 'lyrics';
   lines.forEach((line, index) => {
     span.append(line);
     if (index < lines.length - 1) {
