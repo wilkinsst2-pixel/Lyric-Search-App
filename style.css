@@ -168,6 +168,7 @@ ul.songs li img {
   display: flex;
   align-items: center;
   justify-content: center;
+  cursor: pointer;
 }
 .play-btn { 
   width: 20px;
